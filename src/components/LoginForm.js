@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View, Text, StyleSheet } from 'react-native';
 
-import { Card, CardSection, Input, Button, Spinner } from './common';
+import { Card, CardSection, Button, Spinner } from './common';
+import EmailPassword from './EmailPassword';
 import { emailChanged, passwordChanged, loginUser } from '../actions';
 
 class LoginForm extends Component {
@@ -19,18 +20,6 @@ class LoginForm extends Component {
     this.props.loginUser({ email, password })
   }
 
-  renderError = () => {
-    if (this.props.error) {
-      return(
-        <View style={{ backgroundColor: 'white' }}>
-          <Text style={styles.errorTextStyle}>
-            {this.props.error}
-          </Text>
-        </View>
-      )
-    }
-  }
-
   renderButton = () => {
     if (this.props.loading){
       return <Spinner size="large"/>
@@ -42,30 +31,18 @@ class LoginForm extends Component {
       </Button>
     )
   }
-  
+
   render(){
     return(
       <Card>
-        <CardSection>
-           <Input
-             label="Email"
-             placeholder="email@gmail.com"
-             onChangeText={this.onEmailChange}
-             value={ this.props.email }
-           />
-        </CardSection>
+       <EmailPassword
+         onEmailChange={ this.onEmailChange }
+         onPasswordChange={ this.onPasswordChange }
+         password={ this.props.password }
+         email={ this.props.email }
+         error={ this.props.error }
+       />
 
-        <CardSection>
-          <Input
-            secureTextEntry
-            label="Password"
-            placeholder="password"
-            onChangeText={this.onPasswordChange}
-            value={ this.props.password }
-          />
-        </CardSection>
-
-        {this.renderError()}
 
         <CardSection>
          { this.renderButton() }
@@ -82,12 +59,5 @@ const mapStateToProps = ({ auth }) => ({
   loading: auth.loading
 })
 
-const styles = StyleSheet.create({
-  errorTextStyle: {
-    fontSize: 20,
-    alignSelf: 'center',
-    color: 'red'
-  }
-})
 
 export default connect(mapStateToProps, { emailChanged, passwordChanged, loginUser })(LoginForm);
